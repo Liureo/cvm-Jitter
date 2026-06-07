@@ -1,58 +1,58 @@
 # cvm Jitter
 
-`cvm Jitter` 是一个面向 **Apex Legends** 的 2PC 硬件 Jitter 后座力抵消项目。程序在控制电脑上运行，通过 MAKCU 或 Ferrum 硬件向游戏电脑发送鼠标移动指令，并同时提供本地桌面 UI 与局域网 WebUI。
+`cvm Jitter` is a dual-PC hardware jitter recoil compensation project designed for **Apex Legends**. It runs on a control PC and sends mouse movement commands to a gaming PC through MAKCU or Ferrum hardware. Both a local desktop UI and a LAN WebUI are included.
 
-## 功能
+## Features
 
-- 2PC 双电脑硬件控制架构
-- 支持 MAKCU
-- 支持 Ferrum Serial
-- 支持 Ferrum Net（UDP）
-- 支持本地 UI，可直接在控制电脑上完成连接、调参与控制
-- 支持 WebUI，可由同一局域网内的手机或其他电脑访问
-- 多种 Jitter 轨迹：左上、右上、水平、左下、右下、画圈
-- 可调移动幅度和每步延迟
-- 可选垂直下压，并可独立设置幅度与间隔
-- 支持按住触发、切换触发和始终运行
-- 支持鼠标左键、右键、中键及两个侧键触发
-- 自动保存配置
-- 提供硬件测试移动
-- 提供局域网 WebUI
-- 支持简体中文、繁体中文和英文
-- 支持自定义桌面 UI 与 WebUI 配色
+- Dual-PC hardware control architecture
+- MAKCU support
+- Ferrum Serial support
+- Ferrum Net (UDP) support
+- Local desktop UI for hardware connection, configuration, and control
+- LAN WebUI accessible from phones and other computers
+- Multiple jitter patterns: upper left, upper right, horizontal, lower left, lower right, and circle
+- Adjustable movement amplitude and step delay
+- Optional vertical pressure with independent amplitude and interval settings
+- Hold, toggle, and always-active trigger modes
+- Left, right, middle, and two side mouse button triggers
+- Automatic configuration saving
+- Hardware test movement
+- Simplified Chinese, Traditional Chinese, and English UI languages
+- Custom color themes for the desktop UI and WebUI
 
-## 2PC 工作方式
+## Dual-PC Architecture
 
 ```text
-游戏电脑 ── 游戏与鼠标输入
-   │
-   └── MAKCU 或 Ferrum 硬件 ◀── 控制电脑运行 cvm Jitter
+Gaming PC ── Game and mouse input
+    │
+    └── MAKCU or Ferrum hardware ◀── Control PC running cvm Jitter
 ```
 
-控制电脑负责运行 `cvm Jitter` 和生成 Jitter 移动序列。硬件设备接收串口或网络命令，再将鼠标移动输出到游戏电脑。本项目仅设计用于双电脑环境。
+The control PC runs `cvm Jitter` and generates the jitter movement sequence. The hardware device receives serial or network commands and outputs mouse movement to the gaming PC. This project is designed for dual-PC setups only.
 
-## 系统要求
+## System Requirements
 
-- Windows 10 或 Windows 11
-- Python 3.10 或更高版本
-- Python Launcher（`py` 命令）
-- MAKCU 或 Ferrum 兼容硬件
-- 可用 USB 串口；Ferrum Net 模式需要控制电脑与设备网络互通
+- Windows 10 or Windows 11
+- Python 3.10 or later
+- Python Launcher for Windows (`py` command)
+- MAKCU or Ferrum-compatible hardware
+- An available USB serial port
+- For Ferrum Net, a network connection between the control PC and the device
 
-主要 Python 依赖：
+Main Python dependencies:
 
 - PySide6
 - pyserial
 - Flask
 
-## 安装
+## Installation
 
-1. 下载或解压项目。
-2. 双击 `setup.bat`。
-3. 脚本会创建 `.venv` 虚拟环境并安装依赖。
-4. 安装完成后双击 `start.bat` 启动。
+1. Download or extract the project.
+2. Run `setup.bat`.
+3. The setup script creates a `.venv` virtual environment and installs the required dependencies.
+4. Run `start.bat` after setup is complete.
 
-也可以在 PowerShell 中手动执行：
+Manual PowerShell installation:
 
 ```powershell
 py -3 -m venv .venv
@@ -60,156 +60,168 @@ py -3 -m venv .venv
 .\.venv\Scripts\python.exe main.py
 ```
 
-## 硬件连接
+## Hardware Connection
 
 ### MAKCU
 
-1. 将 MAKCU 连接到控制电脑和游戏电脑。
-2. 打开 `cvm Jitter`，选择 `MAKCU`。
-3. 选择设备对应的 COM 端口和当前波特率。
-4. 点击“连接硬件”。
-5. 连接成功后点击“测试移动”确认输出。
+1. Connect the MAKCU device to the control PC and gaming PC.
+2. Open `cvm Jitter` and select `MAKCU`.
+3. Select the device COM port and its current baud rate.
+4. Click **Connect Hardware**.
+5. After connecting, click **Test Move** to verify movement output.
 
 ### Ferrum Serial
 
-1. 选择 `Ferrum`。
-2. 连接模式选择 `Serial`。
-3. 选择 COM 端口与正确波特率。
-4. 点击“连接硬件”并执行测试移动。
+1. Select `Ferrum`.
+2. Set the connection mode to `Serial`.
+3. Select the correct COM port and baud rate.
+4. Click **Connect Hardware**, then run **Test Move**.
 
 ### Ferrum Net
 
-1. 选择 `Ferrum`。
-2. 连接模式选择 `Net`。
-3. 填写设备 IP、UDP 端口和设备显示的 8 位十六进制 UUID。
-4. 确认控制电脑可以访问设备所在网络。
-5. 点击“连接硬件”。
+1. Select `Ferrum`.
+2. Set the connection mode to `Net`.
+3. Enter the device IP address, UDP port, and the 8-digit hexadecimal UUID shown by the device.
+4. Confirm that the control PC can reach the device over the network.
+5. Click **Connect Hardware**.
 
-## 使用方法
+## Usage
 
-1. 在“硬件”页面连接设备并执行“测试移动”。
-2. 在“设置”页面选择 Jitter 轨迹。
-3. 设置移动幅度和每步延迟。
-4. 选择触发模式与触发按键。
-5. 如有需要，在“高级”页面启用垂直下压。
-6. 点击“启用抖动”进入等待触发状态。
-7. 按所选触发方式运行；结束时点击“停止”。
+1. Connect the hardware from the **Hardware** tab.
+2. Run **Test Move** to verify that the device is working.
+3. Select a jitter pattern from the **Settings** tab.
+4. Configure movement amplitude and step delay.
+5. Select a trigger mode and trigger button.
+6. Enable vertical pressure from the **Advanced** tab when required.
+7. Click **Enable Jitter** to arm the system.
+8. Use the selected trigger mode to start movement.
+9. Click **Stop** when finished.
 
-建议先使用较小幅度和较长延迟测试，再逐步调整。不同灵敏度、DPI、武器和配件需要不同参数。
+Start with a low amplitude and a longer delay, then adjust gradually. Different sensitivities, DPI values, weapons, and attachments require different settings.
 
-## 参数说明
+## Configuration Reference
 
-| 参数 | 说明 |
+| Setting | Description |
 | --- | --- |
-| 硬件 | 选择 MAKCU 或 Ferrum |
-| 连接模式 | Ferrum 可选择 Serial 或 Net |
-| COM 端口 | 硬件在 Windows 中对应的串口 |
-| 波特率 | 使用设备当前波特率；程序不会自动切换为 4M |
-| Jitter 方式 | 鼠标循环移动的轨迹 |
-| 幅度 | 每一步移动的像素量 |
-| 每步延迟 | 相邻 Jitter 步骤之间的时间 |
-| 垂直下压 | Jitter 运行时额外加入向下移动 |
-| 下压幅度 | 每次向下移动的像素量 |
-| 下压间隔 | 两次向下移动之间的时间 |
-| 触发模式 | 按住、切换或不使用触发键 |
-| 触发按键 | 从已连接硬件读取的鼠标按键 |
+| Hardware | Select MAKCU or Ferrum |
+| Connection mode | Select Serial or Net for Ferrum |
+| COM port | The Windows serial port assigned to the hardware |
+| Baud rate | Uses the current device baud rate; the application does not automatically switch the device to 4M |
+| Jitter pattern | The repeating mouse movement path |
+| Amplitude | Mouse movement distance for each step |
+| Step delay | Time between jitter movement steps |
+| Vertical pressure | Adds repeated downward movement while jitter is active |
+| Pressure amplitude | Downward movement distance for each pressure step |
+| Pressure interval | Time between downward pressure steps |
+| Trigger mode | Hold, toggle, or always active |
+| Trigger button | Mouse button state read from the connected hardware |
 
-## 局域网 WebUI
+## Local Desktop UI
 
-在桌面程序中启用“局域网 WebUI”后，服务监听 `0.0.0.0:8765`。界面会显示可访问的网址，同一局域网内的手机或电脑可打开该地址。
+The local Qt desktop UI provides full access to:
 
-- WebUI 可以查看连接与运行状态。
-- 修改设置后需要点击“保存设置”才会发送到桌面程序。
-- 状态轮询不会覆盖尚未保存的表单内容。
-- 不建议将 `8765` 端口直接暴露到公网。
+- Hardware and connection settings
+- Jitter and vertical pressure settings
+- Trigger configuration
+- Connection and run status
+- Hardware test movement
+- Local and WebUI color themes
+- LAN WebUI controls
 
-## 配置文件
+Most desktop settings are saved automatically when changed.
 
-所有设置保存在项目根目录的 `config.json`。桌面界面中的大部分设置会在修改后自动保存。
+## LAN WebUI
 
-需要恢复默认设置时，先关闭程序，再备份并删除 `config.json`。下次启动时程序会根据默认值重新创建配置。
+When **LAN WebUI** is enabled in the desktop application, the server listens on `0.0.0.0:8765`. The application displays a LAN URL that can be opened from another phone or computer on the same network.
 
-## 项目结构
+- The WebUI displays hardware connection and jitter status.
+- Configuration changes are sent to the desktop application after clicking **Save Settings**.
+- Live status polling does not overwrite unsaved form changes.
+- Do not expose port `8765` directly to the public internet.
+
+## Configuration File
+
+Settings are stored in `config.json` in the project root.
+
+To restore the default configuration:
+
+1. Close the application.
+2. Back up or delete `config.json`.
+3. Start the application again.
+
+The application recreates the configuration using its default values.
+
+## Project Structure
 
 ```text
 .
-├── main.py                    # Qt 应用入口
-├── config.json                # 用户配置
-├── requirements.txt           # Python 依赖
-├── setup.bat                  # 首次安装
-├── start.bat                  # 启动程序
+├── main.py                    # Qt application entry point
+├── config.json                # User configuration
+├── requirements.txt           # Python dependencies
+├── setup.bat                  # First-time setup
+├── start.bat                  # Application launcher
 └── app
-    ├── core                   # 配置、主题、轨迹与工作线程
-    ├── hardware               # MAKCU 与 Ferrum 驱动
-    ├── i18n                   # 桌面界面多语言
-    ├── ui                     # Qt 界面、样式与图标
+    ├── core                   # Configuration, themes, patterns, and workers
+    ├── hardware               # MAKCU and Ferrum drivers
+    ├── i18n                   # Desktop UI translations
+    ├── ui                     # Qt interface, styles, and application icon
     │   └── icon
     │       └── cvm.jpg
     └── web                    # Flask WebUI
 ```
 
-## 常见问题
+## Troubleshooting
 
-### 找不到 COM 端口
+### The COM port is missing
 
-- 检查 USB 连接与设备供电。
-- 在 Windows 设备管理器中确认串口是否存在。
-- 点击程序中的“刷新”。
-- 确认没有其他程序占用串口。
+- Check the USB connection and device power.
+- Confirm that the serial port appears in Windows Device Manager.
+- Click **Refresh** in the application.
+- Make sure another program is not using the serial port.
 
-### 连接失败
+### Hardware connection fails
 
-- 确认硬件类型、COM 端口和波特率匹配。
-- MAKCU/Ferrum Serial 使用设备当前波特率，程序不会自动切换波特率。
-- Ferrum Net 需要正确的 IP、UDP 端口和 8 位十六进制 UUID。
+- Confirm that the selected hardware type, COM port, and baud rate are correct.
+- MAKCU and Ferrum Serial use the device's current baud rate.
+- The application does not automatically change the device baud rate.
+- Ferrum Net requires the correct IP address, UDP port, and 8-digit hexadecimal UUID.
 
-### 测试移动正常，但效果不合适
+### Test movement works, but the result is unsuitable
 
-- 调整 Jitter 幅度与每步延迟。
-- 更换移动轨迹。
-- 根据游戏灵敏度、鼠标 DPI、武器与配件分别调参。
+- Adjust the jitter amplitude and step delay.
+- Try another movement pattern.
+- Tune the settings separately for the game sensitivity, mouse DPI, weapon, and attachments.
 
-### WebUI 无法访问
+### The WebUI cannot be opened
 
-- 确认桌面程序已启用 WebUI。
-- 确认访问设备与控制电脑处于同一局域网。
-- 检查 Windows 防火墙是否允许 Python 访问专用网络。
-- 使用界面显示的局域网地址，不要在其他设备上使用 `127.0.0.1`。
+- Confirm that the WebUI is enabled in the desktop application.
+- Confirm that both devices are on the same local network.
+- Allow Python through Windows Firewall on private networks.
+- Use the LAN URL displayed by the application. Do not use `127.0.0.1` from another device.
 
-## License / 許可證
+## License
 
-Copyright (c) 2025 asenyeroao-ct. All rights reserved.  
-版權所有 (c) 2025 asenyeroao-ct。保留所有權利。
+Copyright (c) 2025 asenyeroao-ct. All rights reserved.
 
-This project is licensed under a custom license. See [LICENSE](LICENSE) for details.  
-此專案依據自訂授權條款提供使用許可。詳情請參見 [LICENSE](LICENSE) 檔案。
+This project is licensed under a custom license. See [LICENSE](LICENSE) for details.
 
-### Key Points / 重點
+### Key Points
 
-- Personal, non-commercial use is permitted.  
-  允許個人非商業性使用。
-- Modification and redistribution are allowed with proper attribution.  
-  在正確標明出處的條件下，允許進行修改和再分配。
-- Commercial use is prohibited without written permission.  
-  未經書面許可，禁止商業化使用。
-- Original author `asenyeroao-ct` must be credited in all distributions.  
-  所有散佈方式都必須標明原作者 `asenyeroao-ct`。
+- Personal, non-commercial use is permitted.
+- Modification and redistribution are allowed with proper attribution.
+- Commercial use is prohibited without written permission.
+- The original author, `asenyeroao-ct`, must be credited in all distributions.
 
-## Disclaimer / 免責聲明
+## Disclaimer
 
-This project is for learning and testing purposes only. This program is designed for dual-PC setups only. The author is not responsible for any game account bans, penalties, or other consequences resulting from the use of this program, and no compensation will be provided. Users must bear the risks of use and understand the possible consequences. Users are responsible for ensuring compliance with applicable laws and terms of service of any software or games used with this tool.
+This project is for learning and testing purposes only. This program is designed for dual-PC setups only. The author is not responsible for any game account bans, penalties, hardware damage, data loss, or other consequences resulting from the use of this program, and no compensation will be provided. Users must bear the risks of use and understand the possible consequences. Users are responsible for ensuring compliance with applicable laws and the terms of service of any software or games used with this tool.
 
-此專案僅用於學習和測試目的。該程式僅適用於雙電腦的組態環境。作者不對因使用此程式而導致的任何遊戲帳號被封禁、受到處罰或其他後果負責，亦不會提供任何賠償。使用者必須自行承擔使用此程式的風險，並瞭解可能產生的後果。使用者有責任確保其使用此工具時遵守所有相關法律及所使用軟體或遊戲的服務條款。
+## Contributing
 
-## Contributing / 貢獻
+Contributions are welcome. Feel free to submit a pull request.
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+## Support
 
-歡迎大家貢獻力量！請隨時提交 Pull Request。
-
-## Support / 支援
-
-Discord: Join our Discord server for community support, discussions, and updates.  
-Discord：加入我們的 Discord 伺服器，以獲得社群支援、參與討論並獲知最新消息。
+Join the Discord server for community support, discussions, and updates:
 
 https://discord.com/invite/pJ8JkSBnMB

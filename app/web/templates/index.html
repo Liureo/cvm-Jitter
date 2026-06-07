@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070b12">
+  <title>cvm Jitter</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow"><span class="pulse"></span><span data-i18n="system">CONTROL SYSTEM</span></div>
+        <h1 data-i18n="title">cvm Jitter</h1>
+        <p data-i18n="subtitle">Low-latency hardware movement over serial.</p>
+      </div>
+      <select id="language" class="compact-select" aria-label="Language">
+        <option value="en">EN</option>
+        <option value="zh_CN">简中</option>
+        <option value="zh_TW">繁中</option>
+      </select>
+    </header>
+
+    <section class="status-rail">
+      <div class="status-block">
+        <span class="status-label" data-i18n="hardwareStatus">HARDWARE</span>
+        <strong id="connectionStatus">Offline</strong>
+      </div>
+      <div class="divider"></div>
+      <div class="status-block">
+        <span class="status-label" data-i18n="jitterStatus">JITTER</span>
+        <strong id="runStatus">Idle</strong>
+      </div>
+      <div class="rail-actions">
+        <button id="connectAction" class="button ghost" data-i18n="connect">Connect</button>
+        <button id="startAction" class="button primary" data-i18n="start">Start</button>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <article class="panel panel-wide">
+        <div class="panel-heading">
+          <div>
+            <span class="index">01</span>
+            <h2 data-i18n="connection">Connection</h2>
+          </div>
+          <span class="panel-note" data-i18n="connectionNote">Serial transport</span>
+        </div>
+        <div class="form-grid three">
+          <label><span data-i18n="hardware">Hardware</span>
+            <select id="hardware"><option value="makcu">MAKCU</option><option value="ferrum">Ferrum</option></select>
+          </label>
+          <label id="modeField"><span data-i18n="connectionMode">Ferrum mode</span>
+            <select id="ferrumMode"><option value="serial">Serial</option><option value="net">Net</option></select>
+          </label>
+          <label id="serialPortField"><span data-i18n="port">COM Port</span><select id="port"></select></label>
+          <label id="baudField"><span data-i18n="baud">Baud rate</span>
+            <select id="baud"><option value="115200">115200</option><option value="4000000">4M</option></select>
+          </label>
+          <label id="netHostField"><span data-i18n="netHost">Device IP</span><input id="netHost" type="text"></label>
+          <label id="netPortField"><span data-i18n="netPort">Device port</span><input id="netPort" type="number" min="1" max="65535"></label>
+          <label id="netUuidField"><span data-i18n="netUuid">Device UUID</span><input id="netUuid" type="text" maxlength="8"></label>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-heading">
+          <div><span class="index">02</span><h2 data-i18n="motion">Motion</h2></div>
+        </div>
+        <div class="form-stack">
+          <label><span data-i18n="pattern">Pattern</span>
+            <select id="pattern">
+              <option value="upper_left" data-i18n="upper_left">Upper left</option>
+              <option value="upper_right" data-i18n="upper_right">Upper right</option>
+              <option value="horizontal" data-i18n="horizontal">Horizontal</option>
+              <option value="lower_left" data-i18n="lower_left">Lower left</option>
+              <option value="lower_right" data-i18n="lower_right">Lower right</option>
+              <option value="circle" data-i18n="circle">Circle</option>
+            </select>
+          </label>
+          <div class="split">
+            <label><span data-i18n="amplitude">Amplitude</span><input id="amplitude" type="number" min="1" max="500"></label>
+            <label><span data-i18n="delay">Delay (ms)</span><input id="delay" type="number" min="1" max="5000"></label>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-heading">
+          <div><span class="index">03</span><h2 data-i18n="trigger">Trigger</h2></div>
+        </div>
+        <div class="form-stack">
+          <label><span data-i18n="mode">Mode</span>
+            <select id="triggerMode">
+              <option value="hold" data-i18n="hold">Hold</option>
+              <option value="toggle" data-i18n="toggle">Toggle</option>
+              <option value="always" data-i18n="always">Always active</option>
+            </select>
+          </label>
+          <label><span data-i18n="button">Button</span>
+            <select id="triggerButton">
+              <option value="0" data-i18n="left">Mouse left</option>
+              <option value="1" data-i18n="right">Mouse right</option>
+              <option value="2" data-i18n="middle">Mouse middle</option>
+              <option value="3" data-i18n="side1">Mouse side 1</option>
+              <option value="4" data-i18n="side2">Mouse side 2</option>
+            </select>
+          </label>
+        </div>
+      </article>
+
+      <article class="panel panel-wide">
+        <div class="panel-heading">
+          <div><span class="index">04</span><h2 data-i18n="advanced">Advanced</h2></div>
+          <span class="panel-note" data-i18n="pressureNote">Runs together with jitter</span>
+        </div>
+        <div class="form-stack">
+          <label class="check-row">
+            <input id="verticalPressureEnabled" type="checkbox">
+            <span data-i18n="pressureEnable">Enable vertical pressure</span>
+          </label>
+          <div class="split">
+            <label><span data-i18n="pressureAmplitude">Downward amplitude</span><input id="pressureAmplitude" type="number" min="1" max="500"></label>
+            <label><span data-i18n="pressureDelay">Pressure interval (ms)</span><input id="pressureDelay" type="number" min="1" max="5000"></label>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="save-panel">
+      <div>
+        <strong data-i18n="pendingTitle">Configuration</strong>
+        <span id="formState" data-i18n="noChanges">No pending changes</span>
+      </div>
+      <button id="saveConfig" class="button save-button" data-i18n="save">Save settings</button>
+    </section>
+
+    <footer>
+      <span data-i18n="lanNotice">LAN access enabled</span>
+      <span id="saveState" data-i18n="synced">Synced</span>
+    </footer>
+  </main>
+  <script src="/static/i18n/en.js"></script>
+  <script src="/static/i18n/zh-CN.js"></script>
+  <script src="/static/i18n/zh-TW.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

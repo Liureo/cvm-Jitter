@@ -1,0 +1,1 @@
+"""Application language resources."""

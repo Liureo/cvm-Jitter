@@ -1,0 +1,34 @@
+{
+  "language": "zh_TW",
+  "webui_enabled": false,
+  "hardware": "makcu",
+  "ferrum_mode": "serial",
+  "net_host": "192.168.2.188",
+  "net_port": 8808,
+  "net_uuid": "",
+  "com_port": "",
+  "baud_rate": 115200,
+  "delay_ms": 10,
+  "pattern": "upper_left",
+  "amplitude": 3,
+  "vertical_pressure_enabled": false,
+  "vertical_pressure_amplitude": 1,
+  "vertical_pressure_delay_ms": 10,
+  "separate_web_theme": false,
+  "local_theme": {
+    "background": "#0d1522",
+    "panel": "#172235",
+    "text": "#f2f6fc",
+    "muted": "#aab8cb",
+    "accent": "#4f9cff"
+  },
+  "web_theme": {
+    "background": "#0d1522",
+    "panel": "#172235",
+    "text": "#f2f6fc",
+    "muted": "#aab8cb",
+    "accent": "#4f9cff"
+  },
+  "trigger_mode": "hold",
+  "trigger_button": 0
+}

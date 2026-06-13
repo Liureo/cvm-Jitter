@@ -244,10 +244,19 @@ def build_main_window(window) -> None:
     )
     window.trigger_button_label = QLabel()
     window.trigger_button_combo = QComboBox()
+    window.ads_required_checkbox = QCheckBox()
+    window.ads_required_checkbox.toggled.connect(
+        window._update_ads_fields
+    )
+    window.ads_button_label = QLabel()
+    window.ads_button_combo = QComboBox()
     trigger_grid.addWidget(window.trigger_mode_label, 0, 0)
     trigger_grid.addWidget(window.trigger_button_label, 0, 1)
     trigger_grid.addWidget(window.trigger_mode_combo, 1, 0)
     trigger_grid.addWidget(window.trigger_button_combo, 1, 1)
+    trigger_grid.addWidget(window.ads_required_checkbox, 3, 0)
+    trigger_grid.addWidget(window.ads_button_label, 2, 1)
+    trigger_grid.addWidget(window.ads_button_combo, 3, 1)
     trigger_layout.addLayout(trigger_grid)
     settings_layout.addWidget(trigger_card)
     settings_layout.addStretch()
@@ -377,6 +386,15 @@ def build_main_window(window) -> None:
     actions.addWidget(window.start_button, 2)
     actions.addWidget(window.stop_button, 1)
     root.addLayout(actions)
+
+    window.footer_links = QLabel()
+    window.footer_links.setObjectName("footerLinks")
+    window.footer_links.setAlignment(Qt.AlignmentFlag.AlignCenter)
+    window.footer_links.setTextInteractionFlags(
+        Qt.TextInteractionFlag.TextBrowserInteraction
+    )
+    window.footer_links.setOpenExternalLinks(True)
+    root.addWidget(window.footer_links)
 
     window.setCentralWidget(page)
     window.setStyleSheet(MAIN_STYLESHEET)

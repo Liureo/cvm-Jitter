@@ -110,8 +110,16 @@ class MainWindow(QMainWindow):
             str(self.config.get("trigger_mode", "hold")),
             int(self.config.get("trigger_button", 0)),
         )
+        self.ads_required_checkbox.setChecked(
+            bool(self.config.get("ads_required", False))
+        )
+        self._set_combo_data(
+            self.ads_button_combo,
+            int(self.config.get("ads_button", 1)),
+        )
         self._update_connection_fields()
         self._update_vertical_pressure_fields()
+        self._update_ads_fields()
 
     def _connect_auto_save(self) -> None:
         for signal in (
@@ -124,6 +132,8 @@ class MainWindow(QMainWindow):
             self.separate_web_theme_checkbox.toggled,
             self.trigger_mode_combo.currentIndexChanged,
             self.trigger_button_combo.currentIndexChanged,
+            self.ads_required_checkbox.toggled,
+            self.ads_button_combo.currentIndexChanged,
             self.baud_combo.currentIndexChanged,
             self.hardware_combo.currentIndexChanged,
             self.ferrum_mode_combo.currentIndexChanged,
@@ -177,6 +187,12 @@ class MainWindow(QMainWindow):
                     if self.trigger_button_combo.currentData() is not None
                     else 0
                 ),
+                "ads_required": self.ads_required_checkbox.isChecked(),
+                "ads_button": int(
+                    self.ads_button_combo.currentData()
+                    if self.ads_button_combo.currentData() is not None
+                    else 1
+                ),
             }
         )
         self.save_label.setText(self.tr_text("saved"))
@@ -188,11 +204,16 @@ class MainWindow(QMainWindow):
         pattern = self.pattern_combo.currentData()
         trigger_mode = self.trigger_mode_combo.currentData()
         trigger_button = self.trigger_button_combo.currentData()
+        ads_button = self.ads_button_combo.currentData()
         self.translator.set_language(str(language))
         self._rebuild_pattern_combo(str(pattern or "upper_left"))
         self._rebuild_trigger_combos(
             str(trigger_mode or "hold"),
             int(trigger_button if trigger_button is not None else 0),
+        )
+        self._rebuild_button_combo(
+            self.ads_button_combo,
+            int(ads_button if ads_button is not None else 1),
         )
         self.retranslate_ui()
         self._save_config()
@@ -260,6 +281,14 @@ class MainWindow(QMainWindow):
         self.web_enable_checkbox.setText(self.tr_text("web_enable"))
         self.trigger_mode_label.setText(self.tr_text("trigger_mode"))
         self.trigger_button_label.setText(self.tr_text("trigger_button"))
+        self.ads_required_checkbox.setText(self.tr_text("ads_required"))
+        self.ads_button_label.setText(self.tr_text("ads_button"))
+        self.footer_links.setText(
+            '<a href="https://discord.gg/6SxKbrdq8C">Discord</a>'
+            ' &nbsp;|&nbsp; '
+            '<a href="https://github.com/asenyeroao-ct/cvm-Jitter">'
+            'GitHub</a>'
+        )
         self.start_button.setText(self.tr_text("enable"))
         self.stop_button.setText(self.tr_text("stop"))
         self._render_connection_state()
@@ -289,14 +318,25 @@ class MainWindow(QMainWindow):
         self._set_combo_data(self.trigger_mode_combo, selected_mode)
         self.trigger_mode_combo.blockSignals(False)
 
-        self.trigger_button_combo.blockSignals(True)
-        self.trigger_button_combo.clear()
+        self._rebuild_button_combo(self.trigger_button_combo, selected_button)
+        self._rebuild_button_combo(
+            self.ads_button_combo,
+            int(self.config.get("ads_button", 1)),
+        )
+        self._on_trigger_mode_changed()
+
+    def _rebuild_button_combo(
+        self,
+        combo: QComboBox,
+        selected_button: int,
+    ) -> None:
+        combo.blockSignals(True)
+        combo.clear()
         button_keys = ("left", "right", "middle", "side1", "side2")
         for index, key in zip(TRIGGER_BUTTON_IDS, button_keys):
-            self.trigger_button_combo.addItem(self.tr_text(f"button_{key}"), index)
-        self._set_combo_data(self.trigger_button_combo, selected_button)
-        self.trigger_button_combo.blockSignals(False)
-        self._on_trigger_mode_changed()
+            combo.addItem(self.tr_text(f"button_{key}"), index)
+        self._set_combo_data(combo, selected_button)
+        combo.blockSignals(False)
 
     def refresh_ports(self) -> None:
         selected = self._selected_port() or getattr(self, "saved_port", "")
@@ -471,10 +511,17 @@ class MainWindow(QMainWindow):
         self.test_move_button.setEnabled(False)
         self._set_runtime_settings_enabled(False)
         if self.trigger_mode_combo.currentData() == "always":
-            self._set_run_state("running")
-            self._start_motion()
+            if self.ads_required_checkbox.isChecked():
+                self._set_run_state("ads_waiting")
+            else:
+                self._set_run_state("running")
+                self._start_motion()
         else:
-            self._set_run_state("armed")
+            self._set_run_state(
+                "ads_waiting"
+                if self.ads_required_checkbox.isChecked()
+                else "armed"
+            )
 
     def disarm_jitter(self) -> None:
         self.pending_arm = False
@@ -498,21 +545,47 @@ class MainWindow(QMainWindow):
             return
 
         mode = self.trigger_mode_combo.currentData()
+        ads_required = self.ads_required_checkbox.isChecked()
+        ads_pressed = (
+            not ads_required
+            or self.driver.is_button_pressed(
+                int(self.ads_button_combo.currentData())
+            )
+        )
         if mode == "always":
-            if not self._motion_running():
+            if ads_pressed and not self._motion_running():
+                self._set_run_state("running")
                 self._start_motion()
+            elif not ads_pressed and self._motion_running():
+                self._stop_motion()
+                self._set_run_state("ads_waiting")
             return
 
         button_index = int(self.trigger_button_combo.currentData())
         pressed = self.driver.is_button_pressed(button_index)
         if mode == "hold":
-            if pressed and not self._motion_running():
+            if pressed and ads_pressed and not self._motion_running():
                 self._set_run_state("hold_running")
                 self._start_motion()
-            elif not pressed and self._motion_running():
+            elif (not pressed or not ads_pressed) and self._motion_running():
                 self._stop_motion()
-                self._set_run_state("armed")
-        elif mode == "toggle" and pressed and not self.last_trigger_pressed:
+                self._set_run_state(
+                    "ads_waiting" if ads_required and not ads_pressed else "armed"
+                )
+            elif not pressed:
+                expected_state = (
+                    "ads_waiting"
+                    if ads_required and not ads_pressed
+                    else "armed"
+                )
+                if self.run_state[0] != expected_state:
+                    self._set_run_state(expected_state)
+        elif mode == "toggle" and not ads_pressed:
+            if self.toggle_active or self._motion_running():
+                self.toggle_active = False
+                self._stop_motion()
+            self._set_run_state("ads_waiting")
+        elif pressed and not self.last_trigger_pressed:
             self.toggle_active = not self.toggle_active
             if self.toggle_active:
                 self._set_run_state("toggle_on")
@@ -520,6 +593,8 @@ class MainWindow(QMainWindow):
             else:
                 self._stop_motion()
                 self._set_run_state("toggle_off")
+        elif not self.toggle_active and self.run_state[0] == "ads_waiting":
+            self._set_run_state("armed")
         self.last_trigger_pressed = pressed
 
     def _handle_connection_lost(self) -> None:
@@ -641,11 +716,18 @@ class MainWindow(QMainWindow):
         self.trigger_button_combo.setEnabled(
             enabled and self.trigger_mode_combo.currentData() != "always"
         )
+        self.ads_required_checkbox.setEnabled(enabled)
+        self._update_ads_fields()
 
     def _on_trigger_mode_changed(self, *_args) -> None:
         self.trigger_button_combo.setEnabled(
             self.trigger_mode_combo.currentData() != "always" and not self.armed
         )
+
+    def _update_ads_fields(self, *_args) -> None:
+        enabled = self.ads_required_checkbox.isChecked() and not self.armed
+        self.ads_button_label.setEnabled(enabled)
+        self.ads_button_combo.setEnabled(enabled)
 
     def _update_vertical_pressure_fields(self, *_args) -> None:
         enabled = (
@@ -771,6 +853,12 @@ class MainWindow(QMainWindow):
                     if self.trigger_button_combo.currentData() is not None
                     else 0
                 ),
+                "ads_required": self.ads_required_checkbox.isChecked(),
+                "ads_button": int(
+                    self.ads_button_combo.currentData()
+                    if self.ads_button_combo.currentData() is not None
+                    else 1
+                ),
                 "ports": ports,
                 "connected": bool(self.driver and self.driver.connected),
                 "armed": self.armed,
@@ -880,6 +968,18 @@ class MainWindow(QMainWindow):
             self._set_combo_data(
                 self.trigger_button_combo,
                 int(data.get("trigger_button", self.trigger_button_combo.currentData())),
+            )
+            self.ads_required_checkbox.setChecked(
+                bool(
+                    data.get(
+                        "ads_required",
+                        self.ads_required_checkbox.isChecked(),
+                    )
+                )
+            )
+            self._set_combo_data(
+                self.ads_button_combo,
+                int(data.get("ads_button", self.ads_button_combo.currentData())),
             )
         self._save_config()
 

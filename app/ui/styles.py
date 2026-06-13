@@ -57,6 +57,8 @@ QLabel#fieldLabel {{ color: {muted}; font-size: 12px; }}
 QLabel#saveStatus {{ color: {accent}; font-size: 12px; }}
 QLabel#cardTitle {{ color: {text}; font-size: 17px; font-weight: 650; }}
 QLabel#webAddress {{ color: {accent}; font-size: 12px; }}
+QLabel#footerLinks {{ color: {muted}; font-size: 11px; }}
+QLabel#footerLinks a {{ color: {accent}; }}
 QTabWidget#mainTabs::pane {{
     border: 0;
     background: transparent;

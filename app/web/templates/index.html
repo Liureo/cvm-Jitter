@@ -109,6 +109,19 @@
               <option value="4" data-i18n="side2">Mouse side 2</option>
             </select>
           </label>
+          <label class="check-row">
+            <input id="adsRequired" type="checkbox">
+            <span data-i18n="adsRequired">Ads only</span>
+          </label>
+          <label><span data-i18n="adsButton">ADS button</span>
+            <select id="adsButton">
+              <option value="0" data-i18n="left">Mouse left</option>
+              <option value="1" data-i18n="right">Mouse right</option>
+              <option value="2" data-i18n="middle">Mouse middle</option>
+              <option value="3" data-i18n="side1">Mouse side 1</option>
+              <option value="4" data-i18n="side2">Mouse side 2</option>
+            </select>
+          </label>
         </div>
       </article>
 
@@ -139,7 +152,11 @@
     </section>
 
     <footer>
-      <span data-i18n="lanNotice">LAN access enabled</span>
+      <span class="footer-links">
+        <a href="https://discord.gg/6SxKbrdq8C" target="_blank" rel="noopener">Discord</a>
+        <span>·</span>
+        <a href="https://github.com/asenyeroao-ct/cvm-Jitter" target="_blank" rel="noopener">GitHub</a>
+      </span>
       <span id="saveState" data-i18n="synced">Synced</span>
     </footer>
   </main>

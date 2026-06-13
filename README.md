@@ -15,6 +15,7 @@
 - Optional vertical pressure with independent amplitude and interval settings
 - Hold, toggle, and always-active trigger modes
 - Left, right, middle, and two side mouse button triggers
+- Optional Ads-only gate with a customizable ADS button
 - Automatic configuration saving
 - Hardware test movement
 - Simplified Chinese, Traditional Chinese, and English UI languages
@@ -92,10 +93,11 @@ py -3 -m venv .venv
 3. Select a jitter pattern from the **Settings** tab.
 4. Configure movement amplitude and step delay.
 5. Select a trigger mode and trigger button.
-6. Enable vertical pressure from the **Advanced** tab when required.
-7. Click **Enable Jitter** to arm the system.
-8. Use the selected trigger mode to start movement.
-9. Click **Stop** when finished.
+6. Enable **Ads only** and select the ADS button when jitter should require aiming down sights.
+7. Enable vertical pressure from the **Advanced** tab when required.
+8. Click **Enable Jitter** to arm the system.
+9. Use the selected trigger mode to start movement.
+10. Click **Stop** when finished.
 
 Start with a low amplitude and a longer delay, then adjust gradually. Different sensitivities, DPI values, weapons, and attachments require different settings.
 
@@ -115,6 +117,8 @@ Start with a low amplitude and a longer delay, then adjust gradually. Different 
 | Pressure interval | Time between downward pressure steps |
 | Trigger mode | Hold, toggle, or always active |
 | Trigger button | Mouse button state read from the connected hardware |
+| Ads only | Requires the selected ADS button to be held before jitter can run |
+| ADS button | Customizable ADS input; defaults to mouse right |
 
 ## Local Desktop UI
 
@@ -224,4 +228,4 @@ Contributions are welcome. Feel free to submit a pull request.
 
 Join the Discord server for community support, discussions, and updates:
 
-https://discord.com/invite/pJ8JkSBnMB
+https://discord.gg/6SxKbrdq8C

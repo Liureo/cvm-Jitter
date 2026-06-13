@@ -1,4 +1,4 @@
-const ids = ["hardware","ferrumMode","port","baud","netHost","netPort","netUuid","pattern","amplitude","delay","verticalPressureEnabled","pressureAmplitude","pressureDelay","triggerMode","triggerButton"];
+const ids = ["hardware","ferrumMode","port","baud","netHost","netPort","netUuid","pattern","amplitude","delay","verticalPressureEnabled","pressureAmplitude","pressureDelay","triggerMode","triggerButton","adsRequired","adsButton"];
 const elements = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
 const language = document.getElementById("language");
 const saveButton = document.getElementById("saveConfig");
@@ -52,11 +52,14 @@ function populateForm(next) {
   setValue(elements.pressureDelay, next.vertical_pressure_delay_ms);
   setValue(elements.triggerMode, next.trigger_mode);
   setValue(elements.triggerButton, next.trigger_button);
+  elements.adsRequired.checked = Boolean(next.ads_required);
+  setValue(elements.adsButton, next.ads_button ?? 1);
   applying = false;
   initialized = true;
   dirty = false;
   updateConnectionFields();
   updatePressureFields();
+  updateAdsFields();
   renderDirtyState();
 }
 
@@ -75,6 +78,10 @@ function updatePressureFields() {
   const enabled = elements.verticalPressureEnabled.checked;
   elements.pressureAmplitude.disabled = !enabled;
   elements.pressureDelay.disabled = !enabled;
+}
+
+function updateAdsFields() {
+  elements.adsButton.disabled = !elements.adsRequired.checked;
 }
 
 function updateLiveStatus(next) {
@@ -148,7 +155,9 @@ async function saveConfig() {
       vertical_pressure_amplitude: Number(elements.pressureAmplitude.value),
       vertical_pressure_delay_ms: Number(elements.pressureDelay.value),
       trigger_mode: elements.triggerMode.value,
-      trigger_button: Number(elements.triggerButton.value)
+      trigger_button: Number(elements.triggerButton.value),
+      ads_required: elements.adsRequired.checked,
+      ads_button: Number(elements.adsButton.value)
     })
   });
   dirty = false;
@@ -163,6 +172,7 @@ language.addEventListener("change", () => {
 ids.forEach(id => elements[id].addEventListener("change", () => {
   if (id === "hardware" || id === "ferrumMode") updateConnectionFields();
   if (id === "verticalPressureEnabled") updatePressureFields();
+  if (id === "adsRequired") updateAdsFields();
   markDirty();
 }));
 elements.amplitude.addEventListener("input", markDirty);

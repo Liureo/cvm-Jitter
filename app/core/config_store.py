@@ -27,6 +27,8 @@ DEFAULT_CONFIG = {
     "web_theme": dict(DEFAULT_THEME),
     "trigger_mode": "hold",
     "trigger_button": 0,
+    "ads_required": False,
+    "ads_button": 1,
 }
 
 LEGACY_VALUES = {

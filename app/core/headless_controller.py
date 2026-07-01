@@ -145,8 +145,11 @@ class MotionRunner:
                 deadline = next_jitter
                 if pressure_enabled:
                     deadline = min(deadline, next_pressure)
-                remaining = max(0.001, min(0.02, deadline - time.monotonic()))
-                self._stop_event.wait(remaining)
+                remaining_ms = max(
+                    1,
+                    min(20, int((deadline - time.monotonic()) * 1000)),
+                )
+                self._stop_event.wait(remaining_ms / 1000.0)
         except Exception as exc:
             self.failed_callback(str(exc))
         finally:

@@ -161,8 +161,9 @@ cd ~/Desktop/cvm-Jitter
 ./install_ip_display.sh
 ```
 
-On the next desktop login it shows the current WebUI address, for example
-`http://192.168.1.20:8765`. If no popup appears, install `zenity`:
+On the next desktop login it waits until WiFi gets an IP, then shows the current
+WebUI address, for example `http://192.168.1.20:8765`. It also shows the
+`.local` hostname address when available. If no popup appears, install `zenity`:
 
 ```bash
 sudo apt install -y zenity

@@ -15,8 +15,7 @@ fi
 sudo tee "$SERVICE_FILE" >/dev/null <<EOF
 [Unit]
 Description=cvm Jitter headless WebUI service
-After=network-online.target
-Wants=network-online.target
+After=multi-user.target
 
 [Service]
 Type=simple

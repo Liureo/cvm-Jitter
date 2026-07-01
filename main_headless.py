@@ -37,6 +37,8 @@ def main(argv: list[str] | None = None) -> int:
 
     signal.signal(signal.SIGINT, request_stop)
     signal.signal(signal.SIGTERM, request_stop)
+    if hasattr(signal, "SIGHUP"):
+        signal.signal(signal.SIGHUP, request_stop)
 
     controller.start()
     server.start()

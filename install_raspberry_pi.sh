@@ -16,3 +16,7 @@ echo "  $APP_DIR/.venv/bin/python $APP_DIR/main_headless.py"
 echo
 echo "For serial devices, add your user to dialout, then log out and back in:"
 echo "  sudo usermod -aG dialout $USER"
+echo
+echo "Optional boot helpers:"
+echo "  ./install_autostart.sh      # start WebUI service on boot"
+echo "  ./install_ip_display.sh     # show WebUI IP after desktop login"

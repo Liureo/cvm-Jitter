@@ -113,11 +113,22 @@ or save a manual path in `config.json`.
 
 ### systemd Autostart
 
-The included `cvm-jitter.service` is a template for running the headless WebUI
-on boot. It assumes the app is installed at `/opt/cvm-Jitter` and runs as the
-`pi` user.
+Use the included installer to start the headless WebUI automatically at boot
+from the directory where the project currently lives:
 
-Example installation:
+```bash
+cd ~/Desktop/cvm-Jitter
+./install_autostart.sh
+```
+
+The installer writes `/etc/systemd/system/cvm-jitter.service` using the current
+project path and current Linux user, then enables and starts the service.
+
+If you prefer a manual `/opt/cvm-Jitter` installation, the included
+`cvm-jitter.service` file is a template. It assumes the app is installed at
+`/opt/cvm-Jitter` and runs as the `pi` user.
+
+Manual example:
 
 ```bash
 sudo mkdir -p /opt
@@ -139,6 +150,23 @@ journalctl -u cvm-jitter.service -f
 
 If your Raspberry Pi username or install path is different, edit
 `cvm-jitter.service` before copying it to `/etc/systemd/system/`.
+
+### Desktop IP Popup
+
+If the Raspberry Pi boots into the desktop, install the optional IP display
+autostart helper:
+
+```bash
+cd ~/Desktop/cvm-Jitter
+./install_ip_display.sh
+```
+
+On the next desktop login it shows the current WebUI address, for example
+`http://192.168.1.20:8765`. If no popup appears, install `zenity`:
+
+```bash
+sudo apt install -y zenity
+```
 
 Do not expose port `8765` directly to the public internet.
 

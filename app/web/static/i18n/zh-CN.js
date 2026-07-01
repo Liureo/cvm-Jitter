@@ -1,7 +1,7 @@
 window.WEB_I18N = window.WEB_I18N || {};
 window.WEB_I18N.zh_CN = {
   system:"控制系统",title:"cvm Jitter",subtitle:"通过串口实现低延迟硬件移动。",
-  hardwareStatus:"硬件",jitterStatus:"抖动",connect:"连接",disconnect:"断开",start:"启动",stop:"停止",
+  hardwareStatus:"硬件",jitterStatus:"抖动",connect:"连接",disconnect:"断开",start:"启动",stop:"停止",testMove:"测试移动",
   connection:"连接",connectionNote:"串口或 UDP Net 传输",hardware:"硬件",connectionMode:"Ferrum 模式",port:"COM 端口",baud:"波特率",netHost:"设备 IP",netPort:"设备端口",netUuid:"设备 UUID",
   motion:"运动",pattern:"抖动方式",amplitude:"幅度",delay:"延迟（毫秒）",trigger:"触发",mode:"模式",button:"按键",adsRequired:"需开镜",adsButton:"开镜按键",
   advanced:"高级",pressureNote:"可与抖动同时运行",pressureEnable:"启用垂直下压",pressureAmplitude:"下压幅度",pressureDelay:"下压间隔（毫秒）",

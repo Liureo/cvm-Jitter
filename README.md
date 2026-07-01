@@ -46,6 +46,13 @@ Main Python dependencies:
 - pyserial
 - Flask
 
+Headless Raspberry Pi / Linux dependencies:
+
+- Python 3.10 or later
+- pyserial
+- Flask
+- A user account with serial device permission, usually through the `dialout` group
+
 ## Installation
 
 1. Download or extract the project.
@@ -60,6 +67,84 @@ py -3 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe main.py
 ```
+
+## Raspberry Pi Headless Service
+
+`cvm Jitter` can also run on Raspberry Pi OS or another Linux system without
+the local PySide desktop window. In this mode the Raspberry Pi connects to the
+MAKCU or Ferrum hardware and exposes the existing LAN WebUI.
+
+Recommended setup:
+
+1. Copy the `cvm-Jitter` directory to the Raspberry Pi.
+2. Install Python virtual environment support if needed:
+
+```bash
+sudo apt update
+sudo apt install -y python3 python3-venv
+```
+
+3. Install the headless Python dependencies:
+
+```bash
+cd cvm-Jitter
+chmod +x install_raspberry_pi.sh
+./install_raspberry_pi.sh
+```
+
+4. Allow the current user to access USB serial devices, then log out and back in:
+
+```bash
+sudo usermod -aG dialout "$USER"
+```
+
+5. Run the WebUI service manually:
+
+```bash
+.venv/bin/python main_headless.py
+```
+
+The console prints a LAN URL such as `http://192.168.1.20:8765`. Open that URL
+from a phone or computer on the same network.
+
+Linux serial ports usually appear as `/dev/ttyUSB0`, `/dev/ttyACM0`, or stable
+paths under `/dev/serial/by-id/`. You can select discovered ports in the WebUI
+or save a manual path in `config.json`.
+
+### systemd Autostart
+
+The included `cvm-jitter.service` is a template for running the headless WebUI
+on boot. It assumes the app is installed at `/opt/cvm-Jitter` and runs as the
+`pi` user.
+
+Example installation:
+
+```bash
+sudo mkdir -p /opt
+sudo cp -R cvm-Jitter /opt/cvm-Jitter
+cd /opt/cvm-Jitter
+sudo chown -R pi:pi /opt/cvm-Jitter
+sudo -u pi ./install_raspberry_pi.sh
+sudo cp cvm-jitter.service /etc/systemd/system/cvm-jitter.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now cvm-jitter.service
+```
+
+Check service status and logs:
+
+```bash
+systemctl status cvm-jitter.service
+journalctl -u cvm-jitter.service -f
+```
+
+If your Raspberry Pi username or install path is different, edit
+`cvm-jitter.service` before copying it to `/etc/systemd/system/`.
+
+Do not expose port `8765` directly to the public internet.
+
+Note: 4,000,000 baud support depends on the Raspberry Pi, USB serial adapter,
+cable quality, and kernel driver. If the device is unstable, start with
+`115200` baud.
 
 ## Hardware Connection
 

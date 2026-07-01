@@ -1,0 +1,17 @@
+[Unit]
+Description=cvm Jitter headless WebUI service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/cvm-Jitter
+ExecStart=/opt/cvm-Jitter/.venv/bin/python /opt/cvm-Jitter/main_headless.py --port 8765
+Restart=on-failure
+RestartSec=3
+User=pi
+Group=pi
+SupplementaryGroups=dialout
+
+[Install]
+WantedBy=multi-user.target

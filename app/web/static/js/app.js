@@ -33,7 +33,11 @@ function populateForm(next) {
   setValue(elements.hardware, next.hardware);
   setValue(elements.ferrumMode, next.ferrum_mode || "serial");
   elements.port.innerHTML = "";
-  (next.ports || []).forEach(port => {
+  const ports = next.ports || [];
+  if (next.com_port && !ports.some(port => port.device === next.com_port)) {
+    ports.unshift({device: next.com_port, description: "Manual"});
+  }
+  ports.forEach(port => {
     const option = document.createElement("option");
     option.value = port.device;
     option.textContent = `${port.device} · ${port.description}`;
@@ -92,6 +96,7 @@ function updateLiveStatus(next) {
   const text = strings();
   document.getElementById("connectAction").textContent = next.connected ? text.disconnect : text.connect;
   document.getElementById("startAction").textContent = next.armed ? text.stop : text.start;
+  document.getElementById("testAction").disabled = !next.connected || next.armed;
 }
 
 function applyTheme(theme) {
@@ -197,6 +202,14 @@ document.getElementById("startAction").addEventListener("click", async () => {
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({action:state.armed?"stop":"start"})
+  });
+  setTimeout(loadState, 180);
+});
+document.getElementById("testAction").addEventListener("click", async () => {
+  await fetch("/api/action", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({action:"test"})
   });
   setTimeout(loadState, 180);
 });

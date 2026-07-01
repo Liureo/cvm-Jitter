@@ -877,6 +877,8 @@ class MainWindow(QMainWindow):
             self.arm_jitter()
         elif command == "stop":
             self.disarm_jitter()
+        elif command == "test":
+            self.test_move()
         elif command == "config":
             self._apply_web_config(data)
         self._publish_web_state()

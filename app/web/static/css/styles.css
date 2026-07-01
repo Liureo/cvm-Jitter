@@ -65,6 +65,7 @@ select:focus, input:focus { border-color: rgba(84,214,255,.55); box-shadow: 0 0 
   color: var(--text); font-weight: 650; cursor: pointer; transition: .18s ease;
 }
 .button:hover { transform: translateY(-1px); }
+.button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
 .button.ghost { background: rgba(255,255,255,.03); }
 .button.primary { border-color: transparent; background: linear-gradient(135deg, #176ddd, #4b7fff); box-shadow: 0 10px 28px rgba(51,112,255,.22); }
 .workspace { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }

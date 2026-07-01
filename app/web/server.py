@@ -3,18 +3,35 @@ from __future__ import annotations
 import socket
 import threading
 from pathlib import Path
+from typing import Callable
 
 from flask import Flask, jsonify, render_template, request
-from PySide6.QtCore import QObject, Signal
 from werkzeug.serving import make_server
 
+try:
+    from PySide6.QtCore import QObject, Signal
+except ImportError:
+    QObject = object
+    Signal = None
 
-class WebBridge(QObject):
-    command = Signal(str, object)
+
+if Signal is not None:
+    class WebBridge(QObject):
+        command = Signal(str, object)
+else:
+    class WebBridge(QObject):
+        def __init__(self) -> None:
+            self.command = None
 
 
 class WebUIServer:
-    def __init__(self, bridge: WebBridge, port: int = 8765) -> None:
+    def __init__(
+        self,
+        bridge: WebBridge | None = None,
+        port: int = 8765,
+        command_handler: Callable[[str, object], object] | None = None,
+        state_provider: Callable[[], dict] | None = None,
+    ) -> None:
         web_root = Path(__file__).resolve().parent
         self.app = Flask(
             __name__,
@@ -23,6 +40,8 @@ class WebUIServer:
         )
         self.bridge = bridge
         self.port = port
+        self.command_handler = command_handler
+        self.state_provider = state_provider
         self._server = None
         self._thread: threading.Thread | None = None
         self._state_lock = threading.Lock()
@@ -74,23 +93,32 @@ class WebUIServer:
 
         @self.app.get("/api/state")
         def state():
+            if self.state_provider is not None:
+                return jsonify(self.state_provider())
             with self._state_lock:
                 return jsonify(dict(self._state))
 
         @self.app.post("/api/config")
         def update_config():
             payload = request.get_json(silent=True) or {}
-            self.bridge.command.emit("config", payload)
+            self._emit_command("config", payload)
             return jsonify({"ok": True})
 
         @self.app.post("/api/action")
         def action():
             payload = request.get_json(silent=True) or {}
             action_name = str(payload.get("action", ""))
-            if action_name not in {"connect", "disconnect", "start", "stop"}:
+            if action_name not in {"connect", "disconnect", "start", "stop", "test"}:
                 return jsonify({"ok": False, "error": "Invalid action"}), 400
-            self.bridge.command.emit(action_name, {})
+            self._emit_command(action_name, {})
             return jsonify({"ok": True})
+
+    def _emit_command(self, command: str, payload: object) -> None:
+        if self.command_handler is not None:
+            self.command_handler(command, payload)
+            return
+        if self.bridge is not None and getattr(self.bridge, "command", None) is not None:
+            self.bridge.command.emit(command, payload)
 
     @staticmethod
     def _lan_ip() -> str:
